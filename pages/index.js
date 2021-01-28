@@ -2,14 +2,19 @@ import React from 'react';
 import fetch from 'isomorphic-fetch';
 import render from 'react-dom';
 import Error from 'next/error';
+import StoryList from '../components/StoryList';
+import Layout from '../components/Layout';
+import Link from 'next/link';
 
 class Index extends React.Component {
 
-    static async getInitialProps() {
+    static async getInitialProps({ req, res, query }) {
 
         let stories;
+        let page;
 
         try {
+            page = Number(query.page) || 1;
             const response = await fetch(
                 'http://newsapi.org/v2/top-headlines?' +
                   'country=us&' +
@@ -25,27 +30,28 @@ class Index extends React.Component {
 
         }
 
-        return { stories };
+        return { page, stories };
     }
 
     render() {
-        const { stories } = this.props;
+        const { stories, page } = this.props;
 
         if (stories.length === 0) {
             return <Error statusCode={503} />
         }
 
         return (
-            <div>
-                <h1>Hacker Next</h1>
-                <div>
-                    {stories.articles.map(articles => (
-                        <h2 key={articles.id}>{articles.title}</h2>
-                    ))}
-                </div>
-            </div>
+            <Layout title="Hacker Next" description="Hacker News clone made with Next.js">
+                <StoryList stories={stories} />
 
-        )
+                <footer>
+                    <Link href={`?page=${page + 1}`}>
+                        <a>Click here</a>
+                    </Link>
+                </footer>
+
+            </Layout>
+        );
     }
 }
 
