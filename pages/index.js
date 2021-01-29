@@ -1,6 +1,5 @@
 import React from 'react';
 import fetch from 'isomorphic-fetch';
-import render from 'react-dom';
 import Error from 'next/error';
 import StoryList from '../components/StoryList';
 import Layout from '../components/Layout';
@@ -16,8 +15,8 @@ class Index extends React.Component {
         try {
             page = Number(query.page) || 1;
             const response = await fetch(
-                'http://newsapi.org/v2/top-headlines?' +
-                  'country=us&' +
+                'https://newsapi.org/v2/top-headlines?' +
+                  'country=nz&' + `page=${page}&` +
                   'apiKey=176a296f7b7e4f4dba3653765872f6b7'
                 );
             
@@ -46,9 +45,23 @@ class Index extends React.Component {
 
                 <footer>
                     <Link href={`?page=${page + 1}`}>
-                        <a>Click here</a>
+                        <a>More Hacker News @ Page {page + 1}</a>
                     </Link>
                 </footer>
+
+
+                <style js>
+                    {`
+                        footer {
+                            padding: 1em;
+                        }
+                        footer a {
+                            font-weight: bold;
+                            color: black;
+                            text-decoration: none;
+                        }
+                    `}
+                </style>
 
             </Layout>
         );
